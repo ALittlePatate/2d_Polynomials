@@ -201,7 +201,7 @@ enum STATUS Dessiner_Graph(Poly* poly) {
 
 int main(int argc, char* argv[]) {
     if (argc < 4) {
-        fprintf(stderr, "%s", "[-] usage : poly.exe a b c [--colors]\n");
+        fprintf(stderr, "%s", "[-] usage : poly.exe a b c [--size 20] [--colors]\n");
         return 1;
     }
 
@@ -210,7 +210,21 @@ int main(int argc, char* argv[]) {
     float c = atof(argv[3]);
 
     if (argc > 4) {
-        use_colors = true;
+        if (strcmp(argv[4], "--size") == 0) {
+            if (argc >= 5) {
+                LONGUEUR_X = strtol(argv[5], NULL, 10);
+                LONGUEUR_Y = LONGUEUR_X;
+            } 
+        }
+        
+        if (strcmp(argv[4], "--colors") == 0) {
+            use_colors = true;
+        }
+        if (argc >= 7) {
+            if (strcmp(argv[6], "--colors") == 0) {
+                use_colors = true;
+            }
+        }
     }
 
     printf("[+] Processing %.3fx^2%.3fx%.3f\n", a, b, c);
