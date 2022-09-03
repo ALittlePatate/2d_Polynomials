@@ -11,4 +11,8 @@ The names of the functions/variables are in French, uhh use google translate to 
 ```poly.exe a b c ```
 
 # Screenshot
-![Screenshot](screenshot/screenshot.png)
+With colors :
+![Screenshot with colors](screenshot/screenshot_colors.png)
+
+Without :
+![Screenshot without colors](screenshot/screenshot_no_colors.png)
