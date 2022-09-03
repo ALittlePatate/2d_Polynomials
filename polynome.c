@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
+#include <Windows.h>
 #include <stdbool.h>
 
 #include "polynome.h"
@@ -74,9 +75,13 @@ enum STATUS Calcul_Derivee(Poly* poly, float x, float *out) {
 }
 
 void Dessiner_Separateur() {
+    //1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21
+    //1 2 3 4 5 6
+    //xmin = -5
+    //xmax = 15
     printf("+-----+");
-    for (int i = 0; i <= LONGUEUR_X*2; i++) {
-        if (i == LONGUEUR_X) {
+    for (int i = 0; i <= LONGUEUR_X_TAB*2; i++) {
+        if (i == LONGUEUR_X_TAB*2 - LONGUEUR_X_MAX) {
             printf("--+-");
         }
         else {
@@ -86,6 +91,12 @@ void Dessiner_Separateur() {
     printf("-+\n");
 }
 
+void Dessiner_Actualiser(Poly* poly) {
+    system("cls");
+    Dessiner_Graph(poly);
+    printf("\nPress [ESC] to exit.");
+}
+
 enum STATUS Dessiner_Graph(Poly* poly) {
     if (poly == NULL) {
         return FAIL;
@@ -93,7 +104,7 @@ enum STATUS Dessiner_Graph(Poly* poly) {
 
     printf("\n");
     Dessiner_Separateur();
-    for (int j = LONGUEUR_Y; j >= -LONGUEUR_Y; j--) {
+    for (int j = LONGUEUR_Y_MAX; j >= LONGUEUR_Y_MIN; j--) {
 
         if (j < -9) {
             printf("| %d | ",j);
@@ -111,8 +122,8 @@ enum STATUS Dessiner_Graph(Poly* poly) {
             printf("| 00%d | ",j);
         }
 
-        for (int i = -LONGUEUR_X; i <= LONGUEUR_X+1; i++) {
-            if (i > LONGUEUR_X) {
+        for (int i = LONGUEUR_X_MIN; i <= LONGUEUR_X_MAX+1; i++) {
+            if (i > LONGUEUR_X_MAX) {
                 printf("|");
                 continue;
             }
@@ -189,7 +200,7 @@ enum STATUS Dessiner_Graph(Poly* poly) {
     Dessiner_Separateur();
     printf("|     | ");
 
-    for (int k = -LONGUEUR_Y; k <= LONGUEUR_Y; k++) {
+    for (int k = LONGUEUR_X_MIN; k <= LONGUEUR_X_MAX; k++) {
         if (k < 0) {
             printf("-");
         }
@@ -211,6 +222,8 @@ enum STATUS Dessiner_Graph(Poly* poly) {
 }
 
 int main(int argc, char* argv[]) {
+    system("cls");
+
     if (argc < 4) {
         fprintf(stderr, "%s", "[-] usage : poly.exe a b c [--size 20] [--colors]\n");
         return 1;
@@ -223,14 +236,17 @@ int main(int argc, char* argv[]) {
     if (argc > 4) {
         if (strcmp(argv[4], "--size") == 0) {
             if (argc >= 5) {
-                LONGUEUR_X = strtol(argv[5], NULL, 10);
+                LONGUEUR_X_MAX = strtol(argv[5], NULL, 10);
+                LONGUEUR_Y_MAX = LONGUEUR_X_MAX;
+                LONGUEUR_Y_MIN = -LONGUEUR_X_MAX;
+                LONGUEUR_X_MIN = -LONGUEUR_X_MAX;
+                LONGUEUR_X_TAB = LONGUEUR_X_MAX;
+                LONGUEUR_Y_TAB = LONGUEUR_X_MAX;
 
-                if (LONGUEUR_X >= 100) {
+                if (LONGUEUR_X_MAX >= 100) {
                     fprintf(stderr, "%s", "[-] Size can't be greater than 99.\n");
                     exit(1);
                 }
-
-                LONGUEUR_Y = LONGUEUR_X;
             }
         }
         
@@ -293,6 +309,35 @@ int main(int argc, char* argv[]) {
     printf("[+] Drawing the graph...\n");
     if (Dessiner_Graph(poly) == FAIL) {
         fprintf(stderr, "%s", "[-] Error while drawing the graph.\n");
+    }
+
+    printf("\nPress [ESC] to exit.");
+    while (1) {
+        Sleep(50);
+
+        if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) {
+            break;
+        }
+        if (GetAsyncKeyState(VK_RIGHT) & 0x8000) {
+            LONGUEUR_X_MAX += 5;
+            LONGUEUR_X_MIN = LONGUEUR_X_MAX - LONGUEUR_X_TAB*2;
+            Dessiner_Actualiser(poly);
+        }
+        if (GetAsyncKeyState(VK_LEFT) & 0x8000) {
+            LONGUEUR_X_MAX -= 5;
+            LONGUEUR_X_MIN = LONGUEUR_X_MAX - LONGUEUR_X_TAB*2;
+            Dessiner_Actualiser(poly);
+        }
+        if (GetAsyncKeyState(VK_UP) & 0x8000) {
+            LONGUEUR_Y_MAX += 5;
+            LONGUEUR_Y_MIN = LONGUEUR_Y_MAX - LONGUEUR_Y_TAB*2;
+            Dessiner_Actualiser(poly);
+        }
+        if (GetAsyncKeyState(VK_DOWN) & 0x8000) {
+            LONGUEUR_Y_MAX -= 5;
+            LONGUEUR_Y_MIN = LONGUEUR_Y_MAX - LONGUEUR_Y_TAB*2;
+            Dessiner_Actualiser(poly);
+        }
     }
 
     free(poly);
