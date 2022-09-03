@@ -2,6 +2,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
+#include <stdbool.h>
+
 #include "polynome.h"
 
 enum STATUS Calcul_Delta(Poly* poly) {
@@ -121,22 +123,43 @@ enum STATUS Dessiner_Graph(Poly* poly) {
             if (Calcul_Derivee(poly, i, &y2) == FAIL) {
                 return FAIL;
             }
- 
+
+            //wow, much colors ! https://www.codeproject.com/Tips/5255355/How-to-Put-Color-on-Windows-Console
             if (roundf(y) == j) {
                 if (j == 0) {
-                    printf("-o--");
+                    if (use_colors) {
+                        printf("-\033[36m\033[1mo\033[0m--");
+                    }
+                    else {
+                        printf("-o--");
+                    }
                 }
                 else {
-                    printf(" o  ");
+                    if (use_colors) {
+                        printf("\033[36m\033[1m o  \033[0m");
+                    }
+                    else {
+                        printf(" o  ");
+                    }
                 }
                 continue;
             }
             if (roundf(y2) == j) {
                 if (j == 0) {
-                    printf("-u--");
+                    if (use_colors) {
+                        printf("-\033[92m\033[1mu\033[0m--");
+                    }
+                    else {
+                        printf("-u--");
+                    }
                 }
                 else {
-                    printf(" u  ");
+                    if (use_colors) {
+                        printf("\033[92m\033[1m u  \033[0m");
+                    }
+                    else {
+                        printf(" u  ");
+                    }
                 }
                 continue;
             }
@@ -178,13 +201,17 @@ enum STATUS Dessiner_Graph(Poly* poly) {
 
 int main(int argc, char* argv[]) {
     if (argc < 4) {
-        fprintf(stderr, "%s", "[-] usage : poly.exe a b c\n");
+        fprintf(stderr, "%s", "[-] usage : poly.exe a b c [--colors]\n");
         return 1;
     }
 
     float a = atof(argv[1]);
     float b = atof(argv[2]);
     float c = atof(argv[3]);
+
+    if (argc > 4) {
+        use_colors = true;
+    }
 
     printf("[+] Processing %.3fx^2%.3fx%.3f\n", a, b, c);
 

@@ -28,5 +28,6 @@ enum STATUS Calcul_Derivee(Poly* poly, float x, float *out);
 #define LONGUEUR_X 20
 #define LONGUEUR_Y 20
 void Dessiner_Separateur();
+bool use_colors = false;
 enum STATUS Dessiner_Graph(Poly* poly);
 int main();
