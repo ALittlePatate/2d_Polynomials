@@ -8,7 +8,7 @@ I was bored so i made this tool, it allows you to calculate :
 The names of the functions/variables are in French, uhh use google translate to read the code i guess, sorry for that.
 
 # Usage 
-```poly.exe a b c ```
+```poly.exe a b c [--size 20] [--colors]```
 
 # Screenshot
 With colors :
