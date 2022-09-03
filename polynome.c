@@ -52,12 +52,36 @@ enum STATUS Calcul_Sommet(Poly* poly) {
 }
 
 enum STATUS Calcul_Fonction(Poly* poly, float x, float *out) {
-    if (poly == NULL) {
+    if (poly == NULL || out == NULL) {
         return FAIL;
     }
 
     *out = poly->a * x * x + poly->b * x + poly->c;
     return OK;
+}
+
+enum STATUS Calcul_Derivee(Poly* poly, float x, float *out) {
+    //f'(x)=2ax+b
+
+    if (poly == NULL || out == NULL) {
+        return FAIL;
+    }
+
+    *out = (2 * poly->a * x) + poly->b;
+    return OK;
+}
+
+void Dessiner_Separateur() {
+    printf("+-----+");
+    for (int i = 0; i <= LONGUEUR_X*2; i++) {
+        if (i == LONGUEUR_X) {
+            printf("--+-");
+        }
+        else {
+            printf("----");
+        }
+    }
+    printf("-+\n");
 }
 
 enum STATUS Dessiner_Graph(Poly* poly) {
@@ -66,30 +90,25 @@ enum STATUS Dessiner_Graph(Poly* poly) {
     }
 
     printf("\n");
-    printf("+-----+---------------------------------------------+\n");
+    Dessiner_Separateur();
     for (int j = LONGUEUR_Y; j >= -LONGUEUR_Y; j--) {
 
-        if (j == -10) {
-            printf("| %d |  ",j);
+        if (j < -9) {
+            printf("| %d | ",j);
         }
-        else if (j == 10 || j < 0) {
-            printf("| %d  |  ",j);
+        else if (j > 9 || j < 0) {
+            printf("| %d  | ",j);
         }
         else if (j == 0) {
-            printf("| %d   |--",j);
+            printf("| %d   |-",j);
         }
         else {
-            printf("| %d   |  ",j);
+            printf("| %d   | ",j);
         }
 
         for (int i = -LONGUEUR_X; i <= LONGUEUR_X+1; i++) {
             if (i > LONGUEUR_X) {
-                if (j == 0) {
-                    printf("-|");
-                }
-                else {
-                    printf(" |");
-                }
+                printf("|");
                 continue;
             }
 
@@ -98,35 +117,61 @@ enum STATUS Dessiner_Graph(Poly* poly) {
                 return FAIL;
             }
 
-            if (roundf(y) == j) {
-                printf("o ");
+            float y2;
+            if (Calcul_Derivee(poly, i, &y2) == FAIL) {
+                return FAIL;
             }
-            else if (i == 0) {
+ 
+            if (roundf(y) == j) {
                 if (j == 0) {
-                    printf("+-");
+                    printf("-o--");
                 }
                 else {
-                    printf(": ");
+                    printf(" o  ");
+                }
+                continue;
+            }
+            if (roundf(y2) == j) {
+                if (j == 0) {
+                    printf("-u--");
+                }
+                else {
+                    printf(" u  ");
+                }
+                continue;
+            }
+
+            if (i == 0) {
+                if (j == 0) {
+                    printf("-+--");
+                }
+                else {
+                    printf(" :  ");
                 }
             }
             else if (roundf(y) != j && j != 0) {
-                printf("  ");
+                printf("    ");
             }
             else {
-                printf("--");
+                printf("----");
             }
         }
         printf("\n");
     }
 
     //            |  10 9 8 7 6 5 4 3 2 1 0 1 2 3 4 5 6 7 8 9 10
-    printf("+-----+---------------------------------------------+\n");
+    Dessiner_Separateur();
     printf("|     | ");
     for (int k = -LONGUEUR_Y; k <= LONGUEUR_Y; k++) {
-        printf("%d ",abs(k));
+        if (k < 10 && k > -10) {
+            printf("00%d ",abs(k));
+        }
+        else if (k < 100 && k > -100) {
+            printf("0%d ",abs(k));
+        }
     }
     printf("|\n");
-    printf("+-----+---------------------------------------------+\n");
+    Dessiner_Separateur();
 
     return OK;
 }
