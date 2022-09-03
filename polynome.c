@@ -66,52 +66,33 @@ enum STATUS Dessiner_Graph(Poly* poly) {
     }
 
     printf("\n");
-    for (int j = LONGUEUR_Y; j >= 1; j--) {
-
-        if (j == 10) {
-            printf("%d  | ",j);
-        }
-        else {
-            printf("%d   | ",j);
-        }
-
-        for (int i = 1; i <= LONGUEUR_X; i++) {
-            float y;
-            if (Calcul_Fonction(poly, i, &y) == FAIL) {
-                return FAIL;
-            }
-
-            if (roundf(y) == j) {
-                printf("o ");
-            }
-            else {
-                printf("  ");
-            }
-        }
-        printf("\n");
-    }
-
-    //          | 1 2 3 4 5 6 7 8 9 10
-    printf("----+---------------------\n");
-    printf("    | ");
-    for (int k = 1; k <= LONGUEUR_Y; k++) {
-        printf("%d ",k);
-    }
-    printf("\n----+---------------------\n");
-
-    for (int j = 0; j >= -LONGUEUR_Y; j--) {
+    printf("+-----+---------------------------------------------+\n");
+    for (int j = LONGUEUR_Y; j >= -LONGUEUR_Y; j--) {
 
         if (j == -10) {
-            printf("%d | ",j);
+            printf("| %d |  ",j);
+        }
+        else if (j == 10 || j < 0) {
+            printf("| %d  |  ",j);
         }
         else if (j == 0) {
-            printf("%d   | ",j);
+            printf("| %d   |--",j);
         }
         else {
-            printf("%d  | ",j);
+            printf("| %d   |  ",j);
         }
 
-        for (int i = 1; i <= LONGUEUR_X; i++) {
+        for (int i = -LONGUEUR_X; i <= LONGUEUR_X+1; i++) {
+            if (i > LONGUEUR_X) {
+                if (j == 0) {
+                    printf("-|");
+                }
+                else {
+                    printf(" |");
+                }
+                continue;
+            }
+
             float y;
             if (Calcul_Fonction(poly, i, &y) == FAIL) {
                 return FAIL;
@@ -120,14 +101,33 @@ enum STATUS Dessiner_Graph(Poly* poly) {
             if (roundf(y) == j) {
                 printf("o ");
             }
-            else {
+            else if (i == 0) {
+                if (j == 0) {
+                    printf("+-");
+                }
+                else {
+                    printf(": ");
+                }
+            }
+            else if (roundf(y) != j && j != 0) {
                 printf("  ");
+            }
+            else {
+                printf("--");
             }
         }
         printf("\n");
     }
 
-    printf("\n");
+    //            |  10 9 8 7 6 5 4 3 2 1 0 1 2 3 4 5 6 7 8 9 10
+    printf("+-----+---------------------------------------------+\n");
+    printf("|     | ");
+    for (int k = -LONGUEUR_Y; k <= LONGUEUR_Y; k++) {
+        printf("%d ",abs(k));
+    }
+    printf("|\n");
+    printf("+-----+---------------------------------------------+\n");
+
     return OK;
 }
 
