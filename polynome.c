@@ -98,14 +98,17 @@ enum STATUS Dessiner_Graph(Poly* poly) {
         if (j < -9) {
             printf("| %d | ",j);
         }
-        else if (j > 9 || j < 0) {
-            printf("| %d  | ",j);
+        else if (j > 9) {
+            printf("| 0%d | ",j);
+        }
+        else if (j < 0 && j > -10) {
+            printf("| -0%d | ",abs(j));
         }
         else if (j == 0) {
-            printf("| %d   |-",j);
+            printf("| 00%d |-",j);
         }
         else {
-            printf("| %d   | ",j);
+            printf("| 00%d | ",j);
         }
 
         for (int i = -LONGUEUR_X; i <= LONGUEUR_X+1; i++) {
@@ -185,12 +188,20 @@ enum STATUS Dessiner_Graph(Poly* poly) {
     //            |  10 9 8 7 6 5 4 3 2 1 0 1 2 3 4 5 6 7 8 9 10
     Dessiner_Separateur();
     printf("|     | ");
+
     for (int k = -LONGUEUR_Y; k <= LONGUEUR_Y; k++) {
+        if (k < 0) {
+            printf("-");
+        }
+        else {
+            printf("0");
+        }
+
         if (k < 10 && k > -10) {
-            printf("00%d ",abs(k));
+            printf("0%d ",abs(k));
         }
         else if (k < 100 && k > -100) {
-            printf("0%d ",abs(k));
+            printf("%d ",abs(k));
         }
     }
     printf("|\n");
@@ -213,8 +224,14 @@ int main(int argc, char* argv[]) {
         if (strcmp(argv[4], "--size") == 0) {
             if (argc >= 5) {
                 LONGUEUR_X = strtol(argv[5], NULL, 10);
+
+                if (LONGUEUR_X >= 100) {
+                    fprintf(stderr, "%s", "[-] Size can't be greater than 99.\n");
+                    exit(1);
+                }
+
                 LONGUEUR_Y = LONGUEUR_X;
-            } 
+            }
         }
         
         if (strcmp(argv[4], "--colors") == 0) {
